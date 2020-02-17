@@ -20,7 +20,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Run tests
       run: dotnet test ./implement/PersistentProcess/PersistentProcess.Test/PersistentProcess.Test.csproj --logger trx
-    - name: Run tests
+    - name: dotnet publish
       run: dotnet publish -c Debug ./implement/elm-fullstack
     - uses: actions/upload-artifact@v1
     - name: Publish artifacts
