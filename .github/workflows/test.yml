@@ -27,5 +27,5 @@ jobs:
     - name: Publish artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: executable-files-${{SHA8}}-${{ matrix.environment }}
+        name: executable-files-${{ env.SHA8 }}-${{ matrix.environment }}
         path: ./implement/elm-fullstack/bin/Debug/netcoreapp3.1/publish
