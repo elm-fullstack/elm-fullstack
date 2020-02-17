@@ -10,6 +10,8 @@ jobs:
         environment: [ubuntu-18.04,windows-2019]
 
     runs-on: ${{ matrix.environment }}
+    env:
+      SHA8: ${GITHUB_SHA::8}
 
     steps:
     - uses: actions/setup-dotnet@v1.2.0
@@ -25,5 +27,5 @@ jobs:
     - name: Publish artifacts
       uses: actions/upload-artifact@v1
       with:
-        name: executable-files-${{github.sha::8}}-${{ matrix.environment }}
+        name: executable-files-$SHA8-${{ matrix.environment }}
         path: ./implement/elm-fullstack/bin/Debug/netcoreapp3.1/publish
