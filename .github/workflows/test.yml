@@ -22,8 +22,8 @@ jobs:
       run: dotnet test ./implement/PersistentProcess/PersistentProcess.Test/PersistentProcess.Test.csproj --logger trx
     - name: dotnet publish
       run: dotnet publish -c Debug ./implement/elm-fullstack
-    - uses: actions/upload-artifact@v1
     - name: Publish artifacts
+      uses: actions/upload-artifact@v1
       with:
         name: executable-files
         path: ./implement/elm-fullstack/bin/Debug/netcoreapp3.1/publish
