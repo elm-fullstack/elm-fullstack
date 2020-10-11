@@ -288,19 +288,31 @@ namespace elm_fullstack
 
                 var siteAndPasswordFromCmd = siteAndSitePasswordOptionsOnCommand(truncateProcessHistoryCmd);
 
+                var repetitionsOption =
+                    truncateProcessHistoryCmd.Option("--repetitions", "Number of repetitions. Defaults to 0", CommandOptionType.SingleValue);
+
                 truncateProcessHistoryCmd.OnExecute(() =>
                 {
+                    var repetitions =
+                        repetitionsOption.HasValue() ? int.Parse(repetitionsOption.Value()) : 0;
+
                     var (site, sitePassword) = siteAndPasswordFromCmd();
 
-                    var report =
-                        truncateProcessHistory(
-                            site: site,
-                            siteDefaultPassword: sitePassword,
-                            promptForPasswordOnConsole: true);
+                    for (var repetition = 0; repetition <= repetitions; ++repetition)
+                    {
+                        if (0 < repetition)
+                            System.Threading.Thread.Sleep(TimeSpan.FromMinutes(2));
 
-                    writeReportToFileInReportDirectory(
-                        reportContent: Newtonsoft.Json.JsonConvert.SerializeObject(report, Newtonsoft.Json.Formatting.Indented),
-                        reportKind: "truncate-process-history.json");
+                        var report =
+                            truncateProcessHistory(
+                                site: site,
+                                siteDefaultPassword: sitePassword,
+                                promptForPasswordOnConsole: true);
+
+                        writeReportToFileInReportDirectory(
+                            reportContent: Newtonsoft.Json.JsonConvert.SerializeObject(report, Newtonsoft.Json.Formatting.Indented),
+                            reportKind: "truncate-process-history[" + repetition + "].json");
+                    }
                 });
             });
 
