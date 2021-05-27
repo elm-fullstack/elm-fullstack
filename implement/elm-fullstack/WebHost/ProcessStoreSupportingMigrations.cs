@@ -250,7 +250,7 @@ namespace ElmFullstack.WebHost.ProcessStoreSupportingMigrations
         }
 
         IReadOnlyList<byte> LoadComponentSerialRepresentationForHash(IReadOnlyList<byte> componentHash) =>
-            LoadComponentSerialRepresentationForHash(CommonConversion.StringBase16FromByteArray(componentHash.ToArray()));
+            LoadComponentSerialRepresentationForHash(CommonConversion.StringBase16FromByteArray(componentHash));
 
         IReadOnlyList<byte> LoadComponentSerialRepresentationForHash(string componentHashBase16)
         {

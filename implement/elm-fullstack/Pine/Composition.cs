@@ -491,11 +491,11 @@ namespace Pine
 
                     if (loadedElementSerialRepresentation == null)
                         return Result<string, Component>.err(
-                            "Failed to load list element " + CommonConversion.StringBase16FromByteArray(elementHash.ToArray()));
+                            "Failed to load list element " + CommonConversion.StringBase16FromByteArray(elementHash));
 
                     if (!CommonConversion.HashSHA256(loadedElementSerialRepresentation.ToArray()).SequenceEqual(elementHash))
                         return Result<string, Component>.err(
-                            "Hash for loaded element does not match " + CommonConversion.StringBase16FromByteArray(elementHash.ToArray()));
+                            "Hash for loaded element does not match " + CommonConversion.StringBase16FromByteArray(elementHash));
 
                     return Deserialize(loadedElementSerialRepresentation.ToImmutableList(), loadSerializedComponentByHash);
                 }
@@ -511,7 +511,7 @@ namespace Pine
 
                 if (firstFailed.elementHash != null)
                     return Result<string, Component>.err(
-                        "Failed to load element " + CommonConversion.StringBase16FromByteArray(firstFailed.elementHash.ToArray()) + ": " + firstFailed.loadResult.Err);
+                        "Failed to load element " + CommonConversion.StringBase16FromByteArray(firstFailed.elementHash) + ": " + firstFailed.loadResult.Err);
 
                 return Result<string, Component>.ok(
                     new Component(listContent: loadElementsResults.Select(elementResult => elementResult.loadResult.Ok).ToImmutableList()));
