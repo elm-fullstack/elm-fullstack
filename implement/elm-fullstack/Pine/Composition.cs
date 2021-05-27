@@ -522,8 +522,15 @@ namespace Pine
             {
                 var prefix = System.Text.Encoding.ASCII.GetBytes("blob " + component.BlobContent.Count.ToString() + "\0");
 
+                var serialRepresentation = new byte[prefix.Length + component.BlobContent.Count];
+
+                var componentBlobContentArray = component.BlobContent.ToArray();
+
+                Buffer.BlockCopy(prefix, 0, serialRepresentation, 0, prefix.Length);
+                Buffer.BlockCopy(componentBlobContentArray, 0, serialRepresentation, prefix.Length, componentBlobContentArray.Length);
+
                 return
-                    (serialRepresentation: prefix.Concat(component.BlobContent).ToArray(),
+                    (serialRepresentation: serialRepresentation,
                     dependencies: ImmutableHashSet<Component>.Empty);
             }
 
