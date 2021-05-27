@@ -193,7 +193,7 @@ namespace ElmFullstack
 
             var command = "make " + Filesystem.MakePlatformSpecificPath(pathToFileWithElmEntryPoint) + " --output=\"" + outputFileName + "\" " + elmMakeCommandAppendix;
 
-            var attemptsResults = new List<(ExecutableFile.ProcessOutput processOutput, IReadOnlyCollection<(IImmutableList<string> path, IImmutableList<byte> content)> resultingFiles)>();
+            var attemptsResults = new List<(ExecutableFile.ProcessOutput processOutput, IReadOnlyCollection<(IImmutableList<string> path, IReadOnlyList<byte> content)> resultingFiles)>();
 
             var environmentFiles =
                 elmCodeFiles.Select(file => (path: file.Key, content: file.Value)).ToImmutableList();

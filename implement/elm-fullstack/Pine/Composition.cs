@@ -352,6 +352,10 @@ namespace Pine
         }
 
         static public TreeWithStringPath SortedTreeFromSetOfBlobsWithCommonFilePath(
+            IEnumerable<(string path, byte[] blobContent)> blobsWithPath) =>
+            SortedTreeFromSetOfBlobsWithCommonFilePath(
+                blobsWithPath.Select(blobWithPath => (blobWithPath.path, (IReadOnlyList<byte>)blobWithPath.blobContent)));
+        static public TreeWithStringPath SortedTreeFromSetOfBlobsWithCommonFilePath(
             IEnumerable<(string path, IReadOnlyList<byte> blobContent)> blobsWithPath) =>
             SortedTreeFromSetOfBlobs(
                 blobsWithPath.Select(blobWithPath =>
