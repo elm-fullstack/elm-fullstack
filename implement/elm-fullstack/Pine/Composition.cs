@@ -9,18 +9,28 @@ namespace Pine
     {
         public class Component : IEquatable<Component>
         {
-            public IImmutableList<byte> BlobContent;
+            readonly public byte[] BlobContent;
 
             public IImmutableList<Component> ListContent;
 
+            public Component(byte[] blobContent)
+            {
+                BlobContent = blobContent;
+            }
+
+            public Component(IImmutableList<Component> listContent)
+            {
+                ListContent = listContent;
+            }
+
             static public Component Blob(ImmutableList<byte> blobContent) =>
-                new Component { BlobContent = blobContent };
+                new Component(blobContent: blobContent.ToArray());
 
             static public Component Blob(IReadOnlyList<byte> blobContent) =>
-                Blob(blobContent.ToImmutableList());
+                new Component(blobContent as byte[] ?? blobContent.ToArray());
 
             static public Component List(ImmutableList<Component> listContent) =>
-                new Component { ListContent = listContent };
+                new Component(listContent: listContent);
 
             public bool Equals(Component other)
             {
@@ -141,9 +151,9 @@ namespace Pine
             return SignedIntegerFromBlobValue(component.BlobContent);
         }
 
-        static public Result<string, System.Numerics.BigInteger> SignedIntegerFromBlobValue(IImmutableList<byte> blobValue)
+        static public Result<string, System.Numerics.BigInteger> SignedIntegerFromBlobValue(byte[] blobValue)
         {
-            if (blobValue.Count < 1)
+            if (blobValue.Length < 1)
                 return Result<string, System.Numerics.BigInteger>.err(
                     "Empty blob is not a valid integer because the sign byte is missing. Did you mean to use an unsigned integer?");
 
@@ -156,7 +166,7 @@ namespace Pine
             var isNegative = signByte != 0;
 
             var integerValue =
-                UnsignedIntegerFromBlobValue(blobValue.RemoveAt(0));
+                UnsignedIntegerFromBlobValue(blobValue.AsSpan(1));
 
             return
                 Result<string, System.Numerics.BigInteger>.ok(
@@ -173,29 +183,39 @@ namespace Pine
                 UnsignedIntegerFromBlobValue(component.BlobContent));
         }
 
-        static public System.Numerics.BigInteger UnsignedIntegerFromBlobValue(IImmutableList<byte> blobValue) =>
+        static public System.Numerics.BigInteger UnsignedIntegerFromBlobValue(Span<byte> blobValue) =>
             new System.Numerics.BigInteger(blobValue.ToArray(), isUnsigned: true, isBigEndian: true);
 
         public class TreeWithStringPath : IEquatable<TreeWithStringPath>
         {
             static public readonly IComparer<string> TreeEntryNameComparer = StringComparer.Ordinal;
 
-            public IImmutableList<byte> BlobContent;
+            public readonly byte[] BlobContent;
 
             public IImmutableList<(string name, TreeWithStringPath component)> TreeContent;
 
-            static public TreeWithStringPath blob(ImmutableList<byte> blobContent) =>
-                new TreeWithStringPath { BlobContent = blobContent };
+            public TreeWithStringPath(byte[] blobContent)
+            {
+                BlobContent = blobContent;
+            }
+
+            public TreeWithStringPath(IImmutableList<(string name, TreeWithStringPath component)> treeContent)
+            {
+                TreeContent = treeContent;
+            }
+
+            static public TreeWithStringPath blob(byte[] blobContent) =>
+                new TreeWithStringPath(blobContent: blobContent);
 
             static public TreeWithStringPath blob(IReadOnlyList<byte> blobContent) =>
-                blob(blobContent.ToImmutableList());
+                new TreeWithStringPath(blobContent: blobContent as byte[] ?? blobContent.ToArray());
 
 
-            public IImmutableList<(IImmutableList<string> path, IImmutableList<byte> blobContent)> EnumerateBlobsTransitive()
+            public IImmutableList<(IImmutableList<string> path, IReadOnlyList<byte> blobContent)> EnumerateBlobsTransitive()
             {
                 if (TreeContent == null)
                 {
-                    return ImmutableList.Create<(IImmutableList<string> path, IImmutableList<byte> blobContent)>(
+                    return ImmutableList.Create<(IImmutableList<string> path, IReadOnlyList<byte> blobContent)>(
                         (ImmutableList<string>.Empty, BlobContent));
                 }
 
@@ -252,7 +272,7 @@ namespace Pine
             {
                 return new ParseAsTreeWithStringPathResult
                 {
-                    Ok = new TreeWithStringPath { BlobContent = composition.BlobContent }
+                    Ok = new TreeWithStringPath(blobContent: composition.BlobContent)
                 };
             }
 
@@ -303,8 +323,7 @@ namespace Pine
             return
                 new ParseAsTreeWithStringPathResult
                 {
-                    Ok = new TreeWithStringPath
-                    { TreeContent = compositionResults.Select(compositionResult => compositionResult.Ok).ToImmutableList() }
+                    Ok = new TreeWithStringPath(treeContent: compositionResults.Select(compositionResult => compositionResult.Ok).ToImmutableList())
                 };
         }
 
@@ -314,27 +333,23 @@ namespace Pine
                 return null;
 
             if (tree.BlobContent != null)
-                return new Component { BlobContent = tree.BlobContent };
+                return new Component(blobContent: tree.BlobContent);
 
             var listContent =
                 tree.TreeContent
                 .Select(treeComponent =>
-                    new Component
-                    {
-                        ListContent = ImmutableList.Create(
+                    new Component(listContent:
+                        ImmutableList.Create(
                             ComponentFromString(treeComponent.name),
                             FromTreeWithStringPath(treeComponent.component))
-                    })
+                    ))
                 .ToImmutableList();
 
-            return new Component
-            {
-                ListContent = listContent
-            };
+            return new Component(listContent: listContent);
         }
 
         static public TreeWithStringPath SortedTreeFromSetOfBlobsWithCommonFilePath(
-            IEnumerable<(string path, IImmutableList<byte> blobContent)> blobsWithPath) =>
+            IEnumerable<(string path, IReadOnlyList<byte> blobContent)> blobsWithPath) =>
             SortedTreeFromSetOfBlobs(
                 blobsWithPath.Select(blobWithPath =>
                 {
@@ -347,12 +362,11 @@ namespace Pine
             );
 
         static public TreeWithStringPath SortedTreeFromSetOfBlobsWithCommonFilePath(
-            IEnumerable<(string path, byte[] blobContent)> blobsWithPath) =>
-            SortedTreeFromSetOfBlobsWithCommonFilePath(
-                blobsWithPath.Select(blobWithPath => (blobWithPath.path, (IImmutableList<byte>)blobWithPath.blobContent.ToImmutableList())));
+            IEnumerable<(string path, IReadOnlyList<byte> blobContent)> blobsWithPath) =>
+            SortedTreeFromSetOfBlobsWithCommonFilePath(blobsWithPath);
 
         static public TreeWithStringPath SortedTreeFromSetOfBlobs<PathT>(
-            IEnumerable<(IImmutableList<PathT> path, IImmutableList<byte> blobContent)> blobsWithPath,
+            IEnumerable<(IImmutableList<PathT> path, IReadOnlyList<byte> blobContent)> blobsWithPath,
             Func<PathT, string> mapPathComponent) =>
             SortedTreeFromSetOfBlobs(
                 blobsWithPath.Select(blobWithPath =>
@@ -360,12 +374,12 @@ namespace Pine
                     blobContent: blobWithPath.blobContent)));
 
         static public TreeWithStringPath SortedTreeFromSetOfBlobsWithStringPath(
-            IEnumerable<(IImmutableList<string> path, IImmutableList<byte> blobContent)> blobsWithPath) =>
+            IEnumerable<(IImmutableList<string> path, IReadOnlyList<byte> blobContent)> blobsWithPath) =>
             SortedTreeFromSetOfBlobs(
                 blobsWithPath, pathComponent => pathComponent);
 
         static public TreeWithStringPath SortedTreeFromSetOfBlobsWithStringPath(
-            IReadOnlyDictionary<IImmutableList<string>, IImmutableList<byte>> blobsWithPath) =>
+            IReadOnlyDictionary<IImmutableList<string>, IReadOnlyList<byte>> blobsWithPath) =>
             SortedTreeFromSetOfBlobsWithStringPath(
                 blobsWithPath.Select(pathAndBlobContent => (path: pathAndBlobContent.Key, blobContent: pathAndBlobContent.Value)));
 
@@ -378,14 +392,14 @@ namespace Pine
             SortedTreeFromSetOfBlobs(tree.EnumerateBlobsTransitive());
 
         static public TreeWithStringPath SortedTreeFromSetOfBlobs(
-            IEnumerable<(IImmutableList<string> path, IImmutableList<byte> blobContent)> blobsWithPath) =>
+            IEnumerable<(IImmutableList<string> path, IReadOnlyList<byte> blobContent)> blobsWithPath) =>
             new TreeWithStringPath
             {
                 TreeContent = SortedTreeContentFromSetOfBlobs(blobsWithPath)
             };
 
         static public IImmutableList<(string name, TreeWithStringPath obj)> SortedTreeContentFromSetOfBlobs(
-            IEnumerable<(IImmutableList<string> path, IImmutableList<byte> blobContent)> blobsWithPath) =>
+            IEnumerable<(IImmutableList<string> path, IReadOnlyList<byte> blobContent)> blobsWithPath) =>
             blobsWithPath
             .Aggregate(
                 (IImmutableList<(string name, TreeWithStringPath obj)>)
@@ -395,7 +409,7 @@ namespace Pine
         static public IImmutableList<(string name, TreeWithStringPath obj)> SetBlobAtPathSorted(
             IImmutableList<(string name, TreeWithStringPath obj)> treeContentBefore,
             IImmutableList<string> path,
-            IImmutableList<byte> blobContent)
+            IReadOnlyList<byte> blobContent)
         {
             var pathFirstElement = path.First();
 
@@ -503,10 +517,7 @@ namespace Pine
                         "Failed to load element " + CommonConversion.StringBase16FromByteArray(firstFailed.elementHash.ToArray()) + ": " + firstFailed.loadResult.Err);
 
                 return Result<string, Component>.ok(
-                    new Component
-                    {
-                        ListContent = loadElementsResults.Select(elementResult => elementResult.loadResult.Ok).ToImmutableList(),
-                    });
+                    new Component(listContent: loadElementsResults.Select(elementResult => elementResult.loadResult.Ok).ToImmutableList()));
             }
 
             return Result<string, Component>.err("Invalid prefix: '" + asciiStringUpToFirstSpace + "'.");
@@ -520,9 +531,9 @@ namespace Pine
         {
             if (component.BlobContent != null)
             {
-                var prefix = System.Text.Encoding.ASCII.GetBytes("blob " + component.BlobContent.Count.ToString() + "\0");
+                var prefix = System.Text.Encoding.ASCII.GetBytes("blob " + component.BlobContent.Length.ToString() + "\0");
 
-                var serialRepresentation = new byte[prefix.Length + component.BlobContent.Count];
+                var serialRepresentation = new byte[prefix.Length + component.BlobContent.Length];
 
                 var componentBlobContentArray = component.BlobContent.ToArray();
 
@@ -658,12 +669,12 @@ namespace Pine
             public int GetHashCode(IReadOnlyList<byte> obj) => obj.Count;
         }
 
-        static public IImmutableDictionary<IImmutableList<string>, IImmutableList<byte>> TreeToFlatDictionaryWithPathComparer(
+        static public IImmutableDictionary<IImmutableList<string>, IReadOnlyList<byte>> TreeToFlatDictionaryWithPathComparer(
             TreeWithStringPath tree) =>
             ToFlatDictionaryWithPathComparer(tree.EnumerateBlobsTransitive());
 
-        static public IImmutableDictionary<IImmutableList<string>, IImmutableList<byte>> ToFlatDictionaryWithPathComparer(
-            IEnumerable<(IImmutableList<string> filePath, IImmutableList<byte> fileContent)> filesBeforeSorting) =>
+        static public IImmutableDictionary<IImmutableList<string>, IReadOnlyList<byte>> ToFlatDictionaryWithPathComparer(
+            IEnumerable<(IImmutableList<string> filePath, IReadOnlyList<byte> fileContent)> filesBeforeSorting) =>
             filesBeforeSorting.ToImmutableSortedDictionary(
                 entry => entry.filePath,
                 entry => entry.fileContent,
