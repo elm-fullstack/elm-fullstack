@@ -25,7 +25,7 @@ namespace ElmFullstack.WebHost.ProcessStoreSupportingMigrations
 
         Composition.Component LoadComponent(string componentHash);
 
-        static public (string parentHashBase16, IEnumerable<(IImmutableList<string> filePath, byte[] fileContent)> projectedFiles, IFileStoreReader projectedReader)
+        static public (string parentHashBase16, IEnumerable<(IImmutableList<string> filePath, IReadOnlyList<byte> fileContent)> projectedFiles, IFileStoreReader projectedReader)
             ProjectFileStoreReaderForAppendedCompositionLogEvent(
             IFileStoreReader originalFileStore,
             CompositionLogRecordInFile.CompositionEvent compositionLogEvent)
@@ -50,7 +50,7 @@ namespace ElmFullstack.WebHost.ProcessStoreSupportingMigrations
 
             var compositionLogRecordSerialized = ProcessStoreInFileStore.Serialize(compositionLogRecordStructure);
 
-            var projectedFiles = new List<(IImmutableList<string> filePath, byte[] fileContent)>();
+            var projectedFiles = new List<(IImmutableList<string> filePath, IReadOnlyList<byte> fileContent)>();
 
             var fileStoreWriter = new DelegatingFileStoreWriter
             {

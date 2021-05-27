@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 
@@ -55,12 +56,12 @@ namespace Pine
             return deflatedStream.ToArray();
         }
 
-        static public byte[] Inflate(byte[] input)
+        static public byte[] Inflate(IReadOnlyList<byte> input)
         {
             using var inflatedStream = new System.IO.MemoryStream();
 
             using var deflateStream = new System.IO.Compression.DeflateStream(
-                new System.IO.MemoryStream(input), System.IO.Compression.CompressionMode.Decompress);
+                new System.IO.MemoryStream(input as byte[] ?? input.ToArray()), System.IO.Compression.CompressionMode.Decompress);
 
             deflateStream.CopyTo(inflatedStream);
 
