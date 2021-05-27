@@ -115,14 +115,14 @@ namespace ElmFullstack
         static public (IDisposableProcessWithStringInterface process,
             (string javascriptFromElmMake, string javascriptPreparedToRun) buildArtifacts)
             ProcessFromElmCodeFiles(
-            IReadOnlyCollection<(IImmutableList<string>, IImmutableList<byte>)> elmCodeFiles,
+            IReadOnlyCollection<(IImmutableList<string>, IReadOnlyList<byte>)> elmCodeFiles,
             ElmAppInterfaceConfig? overrideElmAppInterfaceConfig = null) =>
             ProcessFromElmCodeFiles(Composition.ToFlatDictionaryWithPathComparer(elmCodeFiles), overrideElmAppInterfaceConfig);
 
         static public (IDisposableProcessWithStringInterface process,
             (string javascriptFromElmMake, string javascriptPreparedToRun) buildArtifacts)
             ProcessFromElmCodeFiles(
-            IImmutableDictionary<IImmutableList<string>, IImmutableList<byte>> elmCodeFiles,
+            IImmutableDictionary<IImmutableList<string>, IReadOnlyList<byte>> elmCodeFiles,
             ElmAppInterfaceConfig? overrideElmAppInterfaceConfig = null)
         {
             var elmAppInterfaceConfig = overrideElmAppInterfaceConfig ?? ElmAppInterfaceConfig.Default;
@@ -147,13 +147,13 @@ namespace ElmFullstack
         }
 
         static public string CompileElmToJavascript(
-            IImmutableDictionary<IImmutableList<string>, IImmutableList<byte>> elmCodeFiles,
+            IImmutableDictionary<IImmutableList<string>, IReadOnlyList<byte>> elmCodeFiles,
             IImmutableList<string> pathToFileWithElmEntryPoint,
             string elmMakeCommandAppendix = null) =>
             CompileElm(elmCodeFiles, pathToFileWithElmEntryPoint, "file-for-elm-make-output.js", elmMakeCommandAppendix);
 
         static public string CompileElmToHtml(
-            IImmutableDictionary<IImmutableList<string>, IImmutableList<byte>> elmCodeFiles,
+            IImmutableDictionary<IImmutableList<string>, IReadOnlyList<byte>> elmCodeFiles,
             IImmutableList<string> pathToFileWithElmEntryPoint,
             string elmMakeCommandAppendix = null) =>
             CompileElm(elmCodeFiles, pathToFileWithElmEntryPoint, "file-for-elm-make-output.html", elmMakeCommandAppendix);
@@ -179,7 +179,7 @@ namespace ElmFullstack
         [...]
         */
         static public string CompileElm(
-            IImmutableDictionary<IImmutableList<string>, IImmutableList<byte>> elmCodeFiles,
+            IImmutableDictionary<IImmutableList<string>, IReadOnlyList<byte>> elmCodeFiles,
             IImmutableList<string> pathToFileWithElmEntryPoint,
             string outputFileName,
             string elmMakeCommandAppendix = null)

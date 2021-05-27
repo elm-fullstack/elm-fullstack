@@ -21,7 +21,7 @@ namespace Pine
         }
 
         static public (ProcessOutput processOutput, IReadOnlyCollection<(IImmutableList<string> path, IImmutableList<byte> content)> resultingFiles) ExecuteFileWithArguments(
-            IImmutableList<(IImmutableList<string> path, IImmutableList<byte> content)> environmentFiles,
+            IImmutableList<(IImmutableList<string> path, IReadOnlyList<byte> content)> environmentFiles,
             byte[] executableFile,
             string arguments,
             IDictionary<string, string> environmentStrings,
@@ -40,7 +40,7 @@ namespace Pine
 
                 Directory.CreateDirectory(environmentFileDirectory);
 
-                File.WriteAllBytes(environmentFilePath, environmentFile.content.ToArray());
+                File.WriteAllBytes(environmentFilePath, (environmentFile.content as byte[]) ?? environmentFile.content.ToArray());
             }
 
             var executableFilePathAbsolute = Path.Combine(containerDirectory, executableFileName);

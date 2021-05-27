@@ -204,11 +204,14 @@ namespace Pine
                 TreeContent = treeContent;
             }
 
-            static public TreeWithStringPath blob(byte[] blobContent) =>
+            static public TreeWithStringPath Blob(byte[] blobContent) =>
                 new TreeWithStringPath(blobContent: blobContent);
 
-            static public TreeWithStringPath blob(IReadOnlyList<byte> blobContent) =>
+            static public TreeWithStringPath Blob(IReadOnlyList<byte> blobContent) =>
                 new TreeWithStringPath(blobContent: blobContent as byte[] ?? blobContent.ToArray());
+
+            static public TreeWithStringPath Tree(IImmutableList<(string name, TreeWithStringPath component)> treeContent) =>
+                new TreeWithStringPath(treeContent: treeContent);
 
 
             public IImmutableList<(IImmutableList<string> path, IReadOnlyList<byte> blobContent)> EnumerateBlobsTransitive()
@@ -323,7 +326,7 @@ namespace Pine
             return
                 new ParseAsTreeWithStringPathResult
                 {
-                    Ok = new TreeWithStringPath(treeContent: compositionResults.Select(compositionResult => compositionResult.Ok).ToImmutableList())
+                    Ok = TreeWithStringPath.Tree(treeContent: compositionResults.Select(compositionResult => compositionResult.Ok).ToImmutableList())
                 };
         }
 
@@ -361,10 +364,6 @@ namespace Pine
                 })
             );
 
-        static public TreeWithStringPath SortedTreeFromSetOfBlobsWithCommonFilePath(
-            IEnumerable<(string path, IReadOnlyList<byte> blobContent)> blobsWithPath) =>
-            SortedTreeFromSetOfBlobsWithCommonFilePath(blobsWithPath);
-
         static public TreeWithStringPath SortedTreeFromSetOfBlobs<PathT>(
             IEnumerable<(IImmutableList<PathT> path, IReadOnlyList<byte> blobContent)> blobsWithPath,
             Func<PathT, string> mapPathComponent) =>
@@ -393,10 +392,7 @@ namespace Pine
 
         static public TreeWithStringPath SortedTreeFromSetOfBlobs(
             IEnumerable<(IImmutableList<string> path, IReadOnlyList<byte> blobContent)> blobsWithPath) =>
-            new TreeWithStringPath
-            {
-                TreeContent = SortedTreeContentFromSetOfBlobs(blobsWithPath)
-            };
+            TreeWithStringPath.Tree(treeContent: SortedTreeContentFromSetOfBlobs(blobsWithPath));
 
         static public IImmutableList<(string name, TreeWithStringPath obj)> SortedTreeContentFromSetOfBlobs(
             IEnumerable<(IImmutableList<string> path, IReadOnlyList<byte> blobContent)> blobsWithPath) =>
@@ -419,16 +415,14 @@ namespace Pine
             var component =
                 path.Count < 2
                 ?
-                new TreeWithStringPath { BlobContent = blobContent }
+                TreeWithStringPath.Blob(blobContent: blobContent)
                 :
-                new TreeWithStringPath
-                {
-                    TreeContent =
+                TreeWithStringPath.Tree(
+                    treeContent:
                         SetBlobAtPathSorted(
                             componentBefore?.TreeContent ?? ImmutableList<(string name, TreeWithStringPath obj)>.Empty,
                             path.RemoveAt(0),
-                            blobContent)
-                };
+                            blobContent));
 
             return
                 treeContentBefore
