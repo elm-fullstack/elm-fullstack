@@ -23,8 +23,8 @@ namespace Pine
 
                 var blobCandidate = getter(sha256);
 
-                if (!(Enumerable.SequenceEqual(CommonConversion.HashSHA256(blobCandidate), sha256)) ||
-                    Enumerable.SequenceEqual(Composition.GetHash(Composition.Component.Blob(blobCandidate)), sha256))
+                if (!(Enumerable.SequenceEqual(CommonConversion.HashSHA256(blobCandidate), sha256) ||
+                    Enumerable.SequenceEqual(Composition.GetHash(Composition.Component.Blob(blobCandidate)), sha256)))
                     return null;
 
                 return blobCandidate;
