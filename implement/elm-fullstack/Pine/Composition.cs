@@ -23,9 +23,6 @@ namespace Pine
                 ListContent = listContent;
             }
 
-            static public Component Blob(ImmutableList<byte> blobContent) =>
-                new Component(blobContent: blobContent.ToArray());
-
             static public Component Blob(IReadOnlyList<byte> blobContent) =>
                 new Component(blobContent as byte[] ?? blobContent.ToArray());
 
