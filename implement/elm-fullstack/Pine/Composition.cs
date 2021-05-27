@@ -117,20 +117,20 @@ namespace Pine
             BlobValueFromUnsignedInteger(integer)
             .map(Component.Blob);
 
-        static public Result<string, IImmutableList<byte>> BlobValueFromUnsignedInteger(System.Numerics.BigInteger integer)
+        static public Result<string, IReadOnlyList<byte>> BlobValueFromUnsignedInteger(System.Numerics.BigInteger integer)
         {
             var signedBlobValue = BlobValueFromSignedInteger(integer);
 
             if (signedBlobValue[0] != 0)
-                return Result<string, IImmutableList<byte>>.err("Argument is a negative integer.");
+                return Result<string, IReadOnlyList<byte>>.err("Argument is a negative integer.");
 
-            return Result<string, IImmutableList<byte>>.ok(signedBlobValue.RemoveAt(0));
+            return Result<string, IReadOnlyList<byte>>.ok(signedBlobValue.Skip(1).ToArray());
         }
 
         static public Component ComponentFromSignedInteger(System.Numerics.BigInteger integer) =>
             Component.Blob(BlobValueFromSignedInteger(integer));
 
-        static public IImmutableList<byte> BlobValueFromSignedInteger(System.Numerics.BigInteger integer)
+        static public IReadOnlyList<byte> BlobValueFromSignedInteger(System.Numerics.BigInteger integer)
         {
             var integerValue = System.Numerics.BigInteger.Abs(integer);
 
@@ -435,13 +435,13 @@ namespace Pine
                 .ToImmutableList();
         }
 
-        static public Result<String, Component> Deserialize(
+        static public Result<string, Component> Deserialize(
             byte[] serializedComponent,
             Func<IReadOnlyList<byte>, IReadOnlyList<byte>> loadSerializedComponentByHash) =>
             Deserialize(serializedComponent.ToImmutableList(), loadSerializedComponentByHash);
 
-        static public Result<String, Component> Deserialize(
-            IImmutableList<byte> serializedComponent,
+        static public Result<string, Component> Deserialize(
+            IReadOnlyList<byte> serializedComponent,
             Func<IReadOnlyList<byte>, IReadOnlyList<byte>> loadSerializedComponentByHash)
         {
             var asciiStringUpToNull =
@@ -461,14 +461,14 @@ namespace Pine
                 if (count != expectedCount)
                     return Result<string, Component>.err("Unexpected count: got " + count + ", but I expected " + expectedCount);
 
-                return Result<string, Component>.ok(Component.Blob(serializedComponent.RemoveRange(0, beginningToRemoveLength)));
+                return Result<string, Component>.ok(Component.Blob(serializedComponent.Skip(beginningToRemoveLength).ToList()));
             }
 
             if (asciiStringUpToFirstSpace == "list")
             {
                 var beginningToRemoveLength = asciiStringUpToNull.Length + 1;
 
-                var remainingBytes = serializedComponent.RemoveRange(0, beginningToRemoveLength);
+                var remainingBytes = serializedComponent.Skip(beginningToRemoveLength).ToList();
 
                 var parsedElementCount = int.Parse(asciiStringUpToNull.Split(' ').ElementAt(1));
 
@@ -482,10 +482,10 @@ namespace Pine
 
                 var elementsHashes =
                     Enumerable.Range(0, parsedElementCount)
-                    .Select(elementIndex => remainingBytes.Skip(elementIndex * elementHashLength).Take(elementHashLength).ToImmutableList())
+                    .Select(elementIndex => (IReadOnlyList<byte>)remainingBytes.Skip(elementIndex * elementHashLength).Take(elementHashLength).ToList())
                     .ToImmutableList();
 
-                Result<string, Component> TryLoadElementForHash(IImmutableList<byte> elementHash)
+                Result<string, Component> TryLoadElementForHash(IReadOnlyList<byte> elementHash)
                 {
                     var loadedElementSerialRepresentation = loadSerializedComponentByHash(elementHash);
 
