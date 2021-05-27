@@ -75,40 +75,36 @@ namespace test_elm_fullstack
                 },
                 new
                 {
-                    input = new Composition.Component
-                    {
-                        ListContent = new[]
+                    input = Composition.Component.List(
+                        listContent:
+                        new[]
                         {
-                            new Composition.Component
-                            {
-                                ListContent = new[]
+                            Composition.Component.List(
+                                listContent:
+                                new[]
                                 {
-                                    new Composition.Component
-                                    {
-                                        ListContent = new []
+                                    Composition.Component.List(
+                                        listContent:
+                                        new []
                                         {
-                                            new Composition.Component{BlobContent = ImmutableList.Create<byte>(68)},
-                                            new Composition.Component{BlobContent = ImmutableList.Create<byte>(69)},
-                                            new Composition.Component{BlobContent = ImmutableList.Create<byte>(70)},
-                                            new Composition.Component{BlobContent = ImmutableList.Create<byte>(32)},
-                                            new Composition.Component{BlobContent = ImmutableList.Create<byte>(1,243,50)},
-                                        }.ToImmutableList(),
-                                    },
-                                    new Composition.Component{ BlobContent = new byte[]{0,1,2,3}.ToImmutableList() }
-                                }.ToImmutableList()
-                            }
-                        }.ToImmutableList()
-                    },
+                                            Composition.Component.Blob(ImmutableList.Create<byte>(68)),
+                                            Composition.Component.Blob(ImmutableList.Create<byte>(69)),
+                                            Composition.Component.Blob(ImmutableList.Create<byte>(70)),
+                                            Composition.Component.Blob(ImmutableList.Create<byte>(32)),
+                                            Composition.Component.Blob(ImmutableList.Create<byte>(1,243,50)),
+                                        }.ToImmutableList()),
+                                    Composition.Component.Blob(new byte[]{0,1,2,3}),
+                                }.ToImmutableList())
+                        }.ToImmutableList()),
                     expectedOutput = new Composition.ParseAsTreeWithStringPathResult
                     {
-                        Ok = new Composition.TreeWithStringPath
-                        {
-                            TreeContent = new []
+                        Ok = Composition.TreeWithStringPath.Tree(
+                            treeContent:
+                            new []
                             {
                                 (name: "DEF 🌲",
-                                component: new Composition.TreeWithStringPath{ BlobContent = new byte[]{0,1,2,3}.ToImmutableList()} ),
-                            }.ToImmutableList()
-                        }
+                                component: Composition.TreeWithStringPath.Blob(new byte[]{0,1,2,3}) ),
+                            }.ToImmutableList())
                     }
                 },
             };
@@ -134,73 +130,70 @@ namespace test_elm_fullstack
                         (filePath: "b/c", fileContent: new byte[]{3,4,5,6}),
                         (filePath: "b/d", fileContent: new byte[]{7,8}),
                     },
-                    expectedOutput = new Composition.Component
-                    {
-                        ListContent = new []
+                    expectedOutput = Composition.Component.List(
+                        listContent:
+                        new []
                         {
-                            new Composition.Component
-                            {
-                                ListContent = new []
+                            Composition.Component.List(
+                                listContent:
+                                new []
                                 {
-                                    new Composition.Component
-                                    {
-                                        ListContent = new []
+                                    Composition.Component.List(
+                                        listContent:
+                                        new []
                                         {
-                                            new Composition.Component{BlobContent = ImmutableList.Create<byte>(97)},
-                                        }.ToImmutableList(),
-                                    },
-                                    new Composition.Component{ BlobContent = new byte[]{0,1,2}.ToImmutableList()},
-                                }.ToImmutableList()
-                            },
-                            new Composition.Component
-                            {
-                                ListContent = new []
+                                            Composition.Component.Blob(ImmutableList.Create<byte>(97)),
+                                        }.ToImmutableList()),
+                                    Composition.Component.Blob(new byte[]{0,1,2}),
+                                }.ToImmutableList()),
+                            Composition.Component.List(
+                                listContent:
+                                new []
                                 {
-                                    new Composition.Component
-                                    {
-                                        ListContent = new []
+                                    Composition.Component.List(
+                                        listContent:
+                                        new []
                                         {
-                                            new Composition.Component{BlobContent = ImmutableList.Create<byte>(98)},
-                                        }.ToImmutableList(),
-                                    },
-                                    new Composition.Component
-                                    {
-                                        ListContent = new []
-                                        {
-                                            new Composition.Component
-                                            {
-                                                ListContent = new []
-                                                {
-                                                    new Composition.Component
-                                                    {
-                                                        ListContent = new []
-                                                        {
-                                                            new Composition.Component{BlobContent = ImmutableList.Create<byte>(99)},
-                                                        }.ToImmutableList(),
-                                                    },
-                                                    new Composition.Component{ BlobContent = new byte[]{3,4,5,6}.ToImmutableList()},
-                                                }.ToImmutableList()
-                                            },
-                                            new Composition.Component
-                                            {
-                                                ListContent = new []
-                                                {
-                                                    new Composition.Component
-                                                    {
-                                                        ListContent = new []
-                                                        {
-                                                            new Composition.Component{BlobContent = ImmutableList.Create<byte>(100)},
-                                                        }.ToImmutableList(),
-                                                    },
-                                                    new Composition.Component{ BlobContent = new byte[]{7,8}.ToImmutableList()},
-                                                }.ToImmutableList()
-                                            },
+                                            Composition.Component.Blob(ImmutableList.Create<byte>(98)),
                                         }.ToImmutableList()
-                                    }
+                                    ),
+                                    Composition.Component.List(
+                                        listContent:
+                                        new []
+                                        {
+                                            Composition.Component.List(
+                                                listContent:
+                                                new []
+                                                {
+                                                    Composition.Component.List(
+                                                        listContent:
+                                                        new []
+                                                        {
+                                                            Composition.Component.Blob(ImmutableList.Create<byte>(99)),
+                                                        }.ToImmutableList()
+                                                    ),
+                                                    Composition.Component.Blob(new byte[]{3,4,5,6}),
+                                                }.ToImmutableList()
+                                            ),
+                                            Composition.Component.List(
+                                                listContent:
+                                                new []
+                                                {
+                                                    Composition.Component.List(
+                                                        listContent:
+                                                        new []
+                                                        {
+                                                            Composition.Component.Blob(ImmutableList.Create<byte>(100)),
+                                                        }.ToImmutableList()
+                                                    ),
+                                                    Composition.Component.Blob(new byte[]{7,8}.ToImmutableList()),
+                                                }.ToImmutableList()
+                                            ),
+                                        }.ToImmutableList()
+                                    )
                                 }.ToImmutableList()
-                            },
-                        }.ToImmutableList()
-                    }
+                            ),
+                        }.ToImmutableList())
                 },
             };
 
