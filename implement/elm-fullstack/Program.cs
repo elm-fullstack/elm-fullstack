@@ -278,7 +278,7 @@ namespace elm_fullstack
                     {
                         Console.WriteLine("I got no path to a persistent store for the process. This process will not be persisted!");
 
-                        var files = new System.Collections.Concurrent.ConcurrentDictionary<IImmutableList<string>, byte[]>(EnumerableExtension.EqualityComparer<string>());
+                        var files = new System.Collections.Concurrent.ConcurrentDictionary<IImmutableList<string>, IReadOnlyList<byte>>(EnumerableExtension.EqualityComparer<string>());
 
                         var fileStoreWriter = new DelegatingFileStoreWriter
                         {

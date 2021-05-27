@@ -249,10 +249,10 @@ namespace ElmFullstack.WebHost.ProcessStoreSupportingMigrations
             this.fileStore = fileStore;
         }
 
-        byte[] LoadComponentSerialRepresentationForHash(IReadOnlyList<byte> componentHash) =>
+        IReadOnlyList<byte> LoadComponentSerialRepresentationForHash(IReadOnlyList<byte> componentHash) =>
             LoadComponentSerialRepresentationForHash(CommonConversion.StringBase16FromByteArray(componentHash.ToArray()));
 
-        byte[] LoadComponentSerialRepresentationForHash(string componentHashBase16)
+        IReadOnlyList<byte> LoadComponentSerialRepresentationForHash(string componentHashBase16)
         {
             var filePath =
                 GetFilePathForComponentInComponentFileStore(componentHashBase16);
@@ -318,7 +318,7 @@ namespace ElmFullstack.WebHost.ProcessStoreSupportingMigrations
 
                 var reductionRecordFromFile =
                     JsonConvert.DeserializeObject<ProvisionalReductionRecordInFile>(
-                        Encoding.UTF8.GetString(fileContent.AsSpan(payloadStartIndex)));
+                        Encoding.UTF8.GetString((fileContent as byte[] ?? fileContent.ToArray()).AsSpan(payloadStartIndex)));
 
                 if (reducedCompositionHash != reductionRecordFromFile.reducedCompositionHashBase16)
                     throw new Exception("Unexpected content in file " + string.Join("/", filePath) + ", composition hash does not match.");

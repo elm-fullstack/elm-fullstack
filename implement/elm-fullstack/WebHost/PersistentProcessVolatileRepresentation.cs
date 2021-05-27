@@ -540,7 +540,7 @@ namespace ElmFullstack.WebHost.PersistentProcess
             public OkT Ok;
         }
 
-        static public Composition.Result<string, (string parentHashBase16, IEnumerable<(IImmutableList<string> filePath, byte[] fileContent)> projectedFiles, IFileStoreReader projectedReader)>
+        static public Composition.Result<string, (string parentHashBase16, IEnumerable<(IImmutableList<string> filePath, IReadOnlyList<byte> fileContent)> projectedFiles, IFileStoreReader projectedReader)>
             TestContinueWithCompositionEvent(
                 CompositionLogRecordInFile.CompositionEvent compositionLogEvent,
                 IFileStoreReader fileStoreReader)
@@ -557,13 +557,13 @@ namespace ElmFullstack.WebHost.PersistentProcess
                 {
                     if (projectedProcess.lastSetElmAppStateResult?.Ok == null)
                     {
-                        return Composition.Result<string, (string parentHashBase16, IEnumerable<(IImmutableList<string> filePath, byte[] fileContent)> projectedFiles, IFileStoreReader projectedReader)>.err(
+                        return Composition.Result<string, (string parentHashBase16, IEnumerable<(IImmutableList<string> filePath, IReadOnlyList<byte> fileContent)> projectedFiles, IFileStoreReader projectedReader)>.err(
                             "Failed to migrate Elm app state for this deployment: " + projectedProcess.lastSetElmAppStateResult?.Err);
                     }
                 }
             }
 
-            return Composition.Result<string, (string parentHashBase16, IEnumerable<(IImmutableList<string> filePath, byte[] fileContent)> projectedFiles, IFileStoreReader projectedReader)>.ok(
+            return Composition.Result<string, (string parentHashBase16, IEnumerable<(IImmutableList<string> filePath, IReadOnlyList<byte> fileContent)> projectedFiles, IFileStoreReader projectedReader)>.ok(
                 projectionResult);
         }
 

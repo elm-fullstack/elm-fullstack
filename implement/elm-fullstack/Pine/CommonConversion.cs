@@ -12,8 +12,8 @@ namespace Pine
             .Select(octetIndex => Convert.ToByte(base16.Substring(octetIndex * 2, 2), 16))
             .ToArray();
 
-        static public string StringBase16FromByteArray(byte[] array) =>
-            BitConverter.ToString(array).Replace("-", "").ToLowerInvariant();
+        static public string StringBase16FromByteArray(IReadOnlyList<byte> bytes) =>
+            BitConverter.ToString(bytes as byte[] ?? bytes.ToArray()).Replace("-", "").ToLowerInvariant();
 
         static public byte[] HashSHA256(byte[] input)
         {
