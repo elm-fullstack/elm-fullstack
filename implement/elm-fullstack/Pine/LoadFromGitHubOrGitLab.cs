@@ -221,7 +221,7 @@ namespace Pine
                         if (loadedBlobSHA1Base16Lower != expectedSHA)
                             throw new Exception("Unexpected content for git object : SHA is " + loadedBlobSHA1Base16Lower + " instead of " + expectedSHA);
 
-                        return Composition.TreeWithStringPath.Blob(blobContent: memoryStream.ToArray().ToImmutableList());
+                        return Composition.TreeWithStringPath.Blob(blobContent: memoryStream.ToArray());
                     }
 
                     throw new Exception("Unexpected kind of git object: " + gitObject.GetType() + ", " + gitObject.Id);
