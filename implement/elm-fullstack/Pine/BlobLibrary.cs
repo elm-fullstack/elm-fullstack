@@ -23,8 +23,8 @@ namespace Pine
 
                 var blobCandidate = getter(sha256);
 
-                if (!(Enumerable.SequenceEqual(Composition.GetHash(Composition.Component.Blob(blobCandidate)), sha256) ||
-                    Enumerable.SequenceEqual(CommonConversion.HashSHA256(blobCandidate), sha256)))
+                if (!(Enumerable.SequenceEqual(CommonConversion.HashSHA256(blobCandidate), sha256)) ||
+                    Enumerable.SequenceEqual(Composition.GetHash(Composition.Component.Blob(blobCandidate)), sha256))
                     return null;
 
                 return blobCandidate;
@@ -46,8 +46,8 @@ namespace Pine
             var cacheFilePath = Path.Combine(cacheDirectory, sha256DirectoryName, fileName);
 
             bool blobHasExpectedSHA256(byte[] blobCandidate) =>
-                Enumerable.SequenceEqual(Composition.GetHash(Composition.Component.Blob(blobCandidate)), sha256) ||
-                Enumerable.SequenceEqual(CommonConversion.HashSHA256(blobCandidate), sha256);
+                Enumerable.SequenceEqual(CommonConversion.HashSHA256(blobCandidate), sha256) ||
+                Enumerable.SequenceEqual(Composition.GetHash(Composition.Component.Blob(blobCandidate)), sha256);
 
             try
             {
