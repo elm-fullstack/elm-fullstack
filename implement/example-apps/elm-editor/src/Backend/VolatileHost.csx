@@ -242,7 +242,7 @@ ElmMakeResponseStructure ElmMake(ElmMakeRequestStructure elmMakeRequest)
         elmMakeRequest.files
         .ToImmutableDictionary(
             file => (IImmutableList<string>)file.path.ToImmutableList(),
-            file => (IImmutableList<byte>)Convert.FromBase64String(file.contentBase64).ToImmutableList());
+            file => (IReadOnlyList<byte>)Convert.FromBase64String(file.contentBase64));
 
     var environmentFiles =
         elmCodeFiles.Select(file => (path: file.Key, content: file.Value)).ToImmutableList();
@@ -257,7 +257,7 @@ ElmMakeResponseStructure ElmMake(ElmMakeRequestStructure elmMakeRequest)
     var commandLineArguments = commandLineCommonArguments + " --output=" + elmMakeOutputFileName;
     var reportJsonCommandLineArguments = commandLineCommonArguments + " --report=json";
 
-    (Pine.ExecutableFile.ProcessOutput processOutput, IReadOnlyCollection<(IImmutableList<string> path, IImmutableList<byte> content)> resultingFiles) commandResultsFromArguments(string arguments)
+    (Pine.ExecutableFile.ProcessOutput processOutput, IReadOnlyCollection<(IImmutableList<string> path, IReadOnlyList<byte> content)> resultingFiles) commandResultsFromArguments(string arguments)
     {
         return
             Pine.ExecutableFile.ExecuteFileWithArguments(
@@ -388,7 +388,7 @@ static public class ElmFormat
         var elmFormatResult =
             Pine.ExecutableFile.ExecuteFileWithArguments(
                 ImmutableList.Create(
-                    ((IImmutableList<string>)elmModuleFilePath, (IImmutableList<byte>)System.Text.Encoding.UTF8.GetBytes(originalModuleText).ToImmutableList())),
+                    ((IImmutableList<string>)elmModuleFilePath, (IReadOnlyList<byte>)System.Text.Encoding.UTF8.GetBytes(originalModuleText))),
                 GetElmFormatExecutableFile,
                 " " + elmModuleFileName + " --yes",
                 environmentStrings: null);
