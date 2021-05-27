@@ -530,7 +530,7 @@ namespace Pine
                 Buffer.BlockCopy(componentBlobContentArray, 0, serialRepresentation, prefix.Length, componentBlobContentArray.Length);
 
                 return
-                    (serialRepresentation: serialRepresentation,
+                    (serialRepresentation,
                     dependencies: ImmutableHashSet<Component>.Empty);
             }
 
