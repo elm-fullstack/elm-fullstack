@@ -12,7 +12,7 @@
 #r "sha256:b9b4e633ea6c728bad5f7cbbef7f8b842f7e10181731dbe5ec3cd995a6f60287"
 
 // from elm-fullstack-separate-assemblies-640005d544d2fed0b015349dea2fa37364e42404-linux-x64.zip
-#r "sha256:2537dcc633e5f823899a374a8d1511977c0d59f6881325375daeccbe96af0981"
+#r "sha256:70b9d3c3bf506e1d6cd1d7888ee94c1e2b3b16ad794ba2ba64a0703bba1cd730"
 
 using System;
 using System.Collections.Generic;
