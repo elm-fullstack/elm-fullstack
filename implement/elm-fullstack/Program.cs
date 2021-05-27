@@ -1239,7 +1239,7 @@ namespace elm_fullstack
             };
         }
 
-        static (IImmutableDictionary<IImmutableList<string>, IImmutableList<byte>> files, string lastCompositionLogRecordHashBase16) ReadFilesForRestoreProcessFromAdminInterface(
+        static (IImmutableDictionary<IImmutableList<string>, IReadOnlyList<byte>> files, string lastCompositionLogRecordHashBase16) ReadFilesForRestoreProcessFromAdminInterface(
             string sourceAdminInterface,
             string sourceAdminPassword)
         {
@@ -1272,7 +1272,7 @@ namespace elm_fullstack
             return ElmFullstack.WebHost.PersistentProcess.PersistentProcessVolatileRepresentation.GetFilesForRestoreProcess(processHistoryFileStoreRemoteReader);
         }
 
-        static IImmutableDictionary<IImmutableList<string>, IImmutableList<byte>> LoadFilesForRestoreFromPathAndLogToConsole(
+        static IImmutableDictionary<IImmutableList<string>, IReadOnlyList<byte>> LoadFilesForRestoreFromPathAndLogToConsole(
             string sourcePath, string sourcePassword)
         {
             if (Regex.IsMatch(sourcePath, "http(|s)://", RegexOptions.IgnoreCase))

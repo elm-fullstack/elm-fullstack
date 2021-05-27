@@ -354,7 +354,7 @@ namespace Pine
 
             public (string hash, CommitContent content) firstParentCommitWithSameTree;
 
-            public IImmutableList<byte> AsBlob => tree?.BlobContent;
+            public IReadOnlyList<byte> AsBlob => tree?.BlobContent;
         }
 
         public class CommitContent

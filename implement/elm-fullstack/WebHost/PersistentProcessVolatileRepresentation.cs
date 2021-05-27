@@ -112,11 +112,11 @@ namespace ElmFullstack.WebHost.PersistentProcess
             this.lastSetElmAppStateResult = lastSetElmAppStateResult;
         }
 
-        static public (IImmutableDictionary<IImmutableList<string>, IImmutableList<byte>> files, string lastCompositionLogRecordHashBase16)
+        static public (IImmutableDictionary<IImmutableList<string>, IReadOnlyList<byte>> files, string lastCompositionLogRecordHashBase16)
             GetFilesForRestoreProcess(
             IFileStoreReader fileStoreReader)
         {
-            var filesForProcessRestore = new ConcurrentDictionary<IImmutableList<string>, IImmutableList<byte>>(EnumerableExtension.EqualityComparer<string>());
+            var filesForProcessRestore = new ConcurrentDictionary<IImmutableList<string>, IReadOnlyList<byte>>(EnumerableExtension.EqualityComparer<string>());
 
             var recordingReader = new DelegatingFileStoreReader
             {
@@ -126,7 +126,7 @@ namespace ElmFullstack.WebHost.PersistentProcess
 
                     if (fileContent != null)
                     {
-                        filesForProcessRestore[filePath] = fileContent.ToImmutableList();
+                        filesForProcessRestore[filePath] = fileContent;
                     }
 
                     return fileContent;
@@ -463,7 +463,7 @@ namespace ElmFullstack.WebHost.PersistentProcess
             CompositionLogRecordInFile.CompositionEvent compositionEvent,
             IProcessStoreReader storeReader)
         {
-            IImmutableList<byte> loadComponentFromStoreAndAssertIsBlob(string componentHash)
+            IReadOnlyList<byte> loadComponentFromStoreAndAssertIsBlob(string componentHash)
             {
                 var component = storeReader.LoadComponent(componentHash);
 

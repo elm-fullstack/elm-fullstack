@@ -374,8 +374,7 @@ namespace Pine
 
         static public TreeWithStringPath SortedTreeFromSetOfBlobsWithStringPath(
             IEnumerable<(IImmutableList<string> path, IReadOnlyList<byte> blobContent)> blobsWithPath) =>
-            SortedTreeFromSetOfBlobs(
-                blobsWithPath, pathComponent => pathComponent);
+            SortedTreeFromSetOfBlobs(blobsWithPath, pathComponent => pathComponent);
 
         static public TreeWithStringPath SortedTreeFromSetOfBlobsWithStringPath(
             IReadOnlyDictionary<IImmutableList<string>, IReadOnlyList<byte>> blobsWithPath) =>
