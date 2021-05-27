@@ -384,5 +384,26 @@ namespace test_elm_fullstack
                 Assert.AreEqual(expected: testCase.expected, sortedTree);
             }
         }
+
+        [TestMethod]
+        public void Runtime_expenses_hash()
+        {
+            var blobImmutableList = Enumerable.Range(0, 1_000_000).Select(i => (byte)i).ToImmutableList();
+            var blobArray = blobImmutableList.ToArray();
+
+            var listStopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var hashFromList = Composition.GetHash(Composition.Component.Blob(blobImmutableList));
+            listStopwatch.Stop();
+
+            // Test the case found in blob library: Start from array:
+
+            var arrayStopwatch = System.Diagnostics.Stopwatch.StartNew();
+            var hashFromArray = Composition.GetHash(Composition.Component.Blob(blobArray));
+            arrayStopwatch.Stop();
+
+            System.Console.WriteLine("list ms: " + listStopwatch.ElapsedMilliseconds + ", array ms: " + arrayStopwatch.ElapsedMilliseconds);
+
+            CollectionAssert.AreEqual(hashFromList, hashFromArray);
+        }
     }
 }
