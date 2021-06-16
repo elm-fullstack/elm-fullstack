@@ -1,11 +1,4 @@
-module Backend.State exposing
-    ( CustomType(..)
-    , CustomTypeWithTypeParameter(..)
-    , OpaqueCustomType
-    , RecursiveType(..)
-    , State
-    , valueForOpaqueCustomType
-    )
+module Backend.State exposing (..)
 
 import Backend.InterfaceToHost as InterfaceToHost
 import Bytes
